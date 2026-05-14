@@ -1,4 +1,4 @@
-import { GradeLetter } from '../lib/gradeScale';
+import type { GradeLetter } from '../lib/gradeScale';
 export type { GradeLetter };
 
 export interface Subject {
