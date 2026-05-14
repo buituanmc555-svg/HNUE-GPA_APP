@@ -40,19 +40,8 @@ export const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImport }) =
     setError(null);
 
     try {
-      // 1. Login to get JWT
-      const loginRes = await fetch('/api-hnue/api/authenticate/authpsc', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          userName: username, 
-          password: password,
-          grant_type: 'password'
-        })
-      });
-
-      if (!loginRes.ok) throw new Error('Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.');
-      const loginData = await loginRes.json();
+      // 1. Login to get JWT using Service
+      const loginData = await hnueService.login(username, password);
       const token = loginData.Token || loginData.access_token || loginData.token;
 
       if (!token) throw new Error('Không lấy được mã xác thực từ HNUE.');
@@ -62,30 +51,13 @@ export const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImport }) =
       const major = username.substring(3, 6);
       const ctdt = `DHCQK${k}${major}`;
 
-      const marksRes = await fetch(`/api-hnue/api/student/marks?ctdt=${ctdt}&&loai=SV`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!marksRes.ok) throw new Error('Không thể tải dữ liệu điểm.');
-      const marksData = await marksRes.json();
+      // 2. Fetch Marks using Service
+      const marksData = await hnueService.getMarks(token, username);
 
       // 3. Map Data
       const allSubjects: Subject[] = [];
       
-      // We need to fetch details for each subject to get component scores (CC, DK, CK)
-      const fetchDetails = async (scheduleId: string) => {
-        try {
-          const res = await fetch(`/api-hnue/api/student/showmarkdetail?id=${scheduleId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-          });
-          if (res.ok) return await res.json();
-        } catch (e) {
-          console.error('Error fetching details for', scheduleId, e);
-        }
-        return null;
-      };
-
-      // Iterate through ALL years (marksData is an array of years)
+      // Iterate through ALL years
       for (const yearData of marksData) {
         const semesters = yearData.DanhSachDiem || [];
         
@@ -98,9 +70,9 @@ export const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImport }) =
 
           const subjects = sem.DanhSachDiemHK || [];
           
-          // Fetch all details for this semester in parallel
+          // Fetch details using Service
           const detailPromises = subjects.map((s: any) => 
-            s.ScheduleStudyUnitID ? fetchDetails(s.ScheduleStudyUnitID) : Promise.resolve(null)
+            s.ScheduleStudyUnitID ? hnueService.getMarkDetail(token, s.ScheduleStudyUnitID) : Promise.resolve(null)
           );
           const allDetails = await Promise.all(detailPromises);
 
@@ -108,21 +80,19 @@ export const ImportModal: React.FC<ImportModalProps> = ({ onClose, onImport }) =
             const name = s.CurriculumName || 'Môn học không tên';
             const nameLower = name.toLowerCase();
             
-            // Thuật toán lọc môn không tính điểm GPA của HNUE
             const isExcluded = 
               nameLower.includes('thể chất') || 
               nameLower.includes('quốc phòng') || 
               nameLower.includes('quân sự') || 
               nameLower.includes('pháp luật') || 
               nameLower.includes('ngoài chương trình') ||
-              name.includes('*') || // Môn có dấu * là môn ngoài chương trình
-              /^hp[1-4][: ]/i.test(name); // Chặn HP1, HP2, HP3, HP4 (Quốc phòng)
+              name.includes('*') || 
+              /^hp[1-4][: ]/i.test(name);
 
             if (isExcluded) return;
 
             const details = allDetails[index];
-            let scoreCC = 10;
-            let scoreDK = 8;
+            let scoreCC = 10, scoreDK = 8;
             let scoreFinal = s.DiemTK_10 ? Number(s.DiemTK_10) : undefined;
             let weightCC = 0.1, weightDK = 0.3, weightFinal = 0.6;
 
