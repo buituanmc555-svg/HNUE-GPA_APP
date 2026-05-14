@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Upload, Clipboard, CheckCircle2, AlertCircle, Key, Loader2, GraduationCap } from 'lucide-react';
 import type { Subject } from '../types';
+import { hnueService } from '../lib/hnueApi';
 
 interface ImportModalProps {
   onClose: () => void;
