@@ -1,5 +1,5 @@
 import { GRADE_SCALE, GRADE_LETTERS } from './gradeScale';
-import type { Subject, ScenarioResult } from '../types';
+import type { Subject, ScenarioResult, GradeLetter } from '../types';
 
 // ─────────────────────────────────────────────────────────────
 // Logic 1: Calculate required final exam score for a subject
@@ -212,7 +212,7 @@ export function calcSaveNetScenarios(
     description: string
   ): ScenarioResult => {
     const assignments = pending.map(s => {
-      const grade = scenario.assignments[s.id] || 'F';
+      const grade = (scenario.assignments[s.id] || 'F') as GradeLetter;
       const finalResult = calcRequiredFinalScore({ ...s, targetLetter: grade });
       return {
         subjectId: s.id,

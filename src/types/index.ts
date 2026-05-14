@@ -1,4 +1,5 @@
-export type GradeLetter = 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D+' | 'D';
+import { GradeLetter } from '../lib/gradeScale';
+export type { GradeLetter };
 
 export interface Subject {
   id: string;
