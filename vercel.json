@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api-hnue/:path*",
+      "destination": "https://uisapi.hnue.edu.vn/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

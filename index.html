@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Công cụ tính GPA thông minh dành cho sinh viên HNUE. Hỗ trợ chế độ What-if, Cứu Net và lưu kịch bản điểm." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['"JetBrains Mono"', 'monospace'],
+            },
+            colors: {
+              brand: {
+                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 
+                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 
+                800: '#1e40af', 900: '#1e3a8a'
+              }
+            },
+            keyframes: {
+              'fade-in': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+              'slide-up': { '0%': { transform: 'translateY(10px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } }
+            },
+            animation: {
+              'fade-in': 'fade-in 0.5s ease-out',
+              'slide-up': 'slide-up 0.5s ease-out'
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      .bg-brand-50 { background-color: #eff6ff !important; }
+      .bg-brand-600 { background-color: #2563eb !important; }
+      .text-brand-400 { color: #60a5fa !important; }
+      .text-brand-600 { color: #2563eb !important; }
+      .border-brand-100 { border-color: #dbeafe !important; }
+      .border-brand-200 { border-color: #bfdbfe !important; }
+      .shadow-brand-600\/30 { --tw-shadow-color: rgba(37, 99, 235, 0.3); }
+    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>HNUE GPA — Tính Điểm Thông Minh</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

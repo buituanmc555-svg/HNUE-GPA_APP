@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "HNUE GPA Auto-fetch",
+  "version": "1.0.0",
+  "description": "Tự động lấy điểm từ cổng đào tạo HNUE (dtdh.hnue.edu.vn) và đưa vào HNUE GPA Tool",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://dtdh.hnue.edu.vn/*",
+    "https://uisapi.hnue.edu.vn/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://dtdh.hnue.edu.vn/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

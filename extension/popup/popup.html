@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>HNUE GPA Auto-fetch</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { width: 340px; font-family: 'JetBrains Mono', monospace; background: #f8fafc; color: #0f172a; -webkit-font-smoothing: antialiased; }
+
+    .header { padding: 16px; background: #ffffff; border-bottom: 1px solid #e2e8f0; }
+    .header-title { display: flex; align-items: center; gap: 10px; }
+    .logo { color: #2563eb; display: flex; }
+    h1 { font-size: 15px; font-weight: 700; color: #0f172a; letter-spacing: -0.5px; }
+    .subtitle { font-size: 11px; color: #64748b; margin-top: 2px; font-weight: 500; }
+
+    .body { padding: 16px; background: #f8fafc; }
+
+    .status-box { border-radius: 8px; padding: 12px; font-size: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-weight: 500; border: 1px solid transparent; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .status-box.info { border-left: 3px solid #3b82f6; color: #475569; }
+    .status-box.info .status-icon { color: #3b82f6; }
+    .status-box.warn { border-left: 3px solid #f59e0b; color: #475569; }
+    .status-box.warn .status-icon { color: #f59e0b; }
+    .status-box.error { border-left: 3px solid #ef4444; color: #ef4444; }
+    .status-box.error .status-icon { color: #ef4444; }
+    .status-box.success { border-left: 3px solid #10b981; color: #10b981; }
+    .status-box.success .status-icon { color: #10b981; }
+    
+    .status-icon { flex-shrink: 0; display: flex; }
+
+    .btn { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .btn-primary { background: #ffffff; border-color: #cbd5e1; color: #0f172a; }
+    .btn-primary:hover:not(:disabled) { background: #f1f5f9; border-color: #2563eb; color: #2563eb; }
+    .btn-copy { background: #2563eb; border-color: #2563eb; color: #ffffff; }
+    .btn-copy:hover:not(:disabled) { background: #1d4ed8; border-color: #1d4ed8; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+    .preview { margin-top: 12px; max-height: 200px; overflow-y: auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; }
+    .subject-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+    .subject-item:last-child { border-bottom: none; }
+    .subj-name { font-size: 12px; font-weight: 600; color: #0f172a; flex: 1; margin-bottom: 2px; }
+    .subj-code { font-size: 10px; color: #2563eb; font-weight: 700; }
+    .subj-credits { font-size: 10px; color: #64748b; margin-left: 8px; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+
+    .hint { font-size: 11px; color: #64748b; text-align: center; margin-top: 12px; line-height: 1.5; background: #ffffff; padding: 10px; border-radius: 8px; border: 1px dashed #cbd5e1; }
+    .hint a { color: #2563eb; text-decoration: none; font-weight: 600; }
+
+    .divider { border: none; border-top: 1px dashed #cbd5e1; margin: 12px 0; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-title">
+      <span class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+      </span>
+      <div>
+        <h1>HNUE GPA Auto-fetch</h1>
+        <div class="subtitle">Lấy điểm tự động từ cổng đào tạo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body">
+    <div id="status" class="status-box info">
+      <span class="status-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+      </span>
+      <span id="status-text">Đang kiểm tra trang hiện tại...</span>
+    </div>
+
+    <button id="btn-fetch" class="btn btn-primary" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      Lấy điểm từ trang này
+    </button>
+    <button id="btn-copy" class="btn btn-copy" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+      Sao chép JSON → dán vào App
+    </button>
+
+    <hr class="divider" />
+
+    <div id="preview" class="preview"></div>
+
+    <div class="hint">
+      Cách dùng: Đăng nhập <a href="https://dtdh.hnue.edu.vn/student/marks" target="_blank">dtdh.hnue.edu.vn</a>
+      → mở trang điểm → bấm <strong>"Lấy điểm"</strong> → bấm <strong>"Sao chép"</strong>
+      → dán vào ô Import trong app.
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
