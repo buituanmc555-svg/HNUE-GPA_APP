@@ -3,7 +3,7 @@ import type { Subject, ScenarioResult } from '../types';
 import { calcSaveNetScenarios } from '../lib/calculator';
 import { calcRequiredFinalScore } from '../lib/calculator';
 import { GRADE_COLORS } from '../lib/gradeScale';
-import { Target, Sparkles, AlertTriangle, Frown, PartyPopper } from 'lucide-react';
+import { Target, Sparkles, AlertTriangle, Frown, PartyPopper, ChevronRight } from 'lucide-react';
 
 interface TargetModeProps {
   subjects: Subject[];

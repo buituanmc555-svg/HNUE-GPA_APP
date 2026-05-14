@@ -1,3 +1,5 @@
+export type GradeLetter = 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D+' | 'D';
+
 export interface Subject {
   id: string;
   name: string;
@@ -13,7 +15,7 @@ export interface Subject {
   scoreDK: number;    // 0 - 10
 
   // Target
-  targetLetter: string; // "A", "B+", "B", etc.
+  targetLetter: GradeLetter; // "A", "B+", "B", etc.
   
   // Final exam score (known = locked, undefined = pending)
   scoreFinal?: number;
